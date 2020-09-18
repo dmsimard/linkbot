@@ -43,7 +43,7 @@ class GithubLinks(BotPlugin):
         match_pr = re.search("/pull/\d+", parsed_url.path)
         if match_pr:
             try:
-                self.send(mess.frm, self.expand_pr(url))
+                self.send(mess.to, self.expand_pr(url))
                 return True
             except Exception as e:
                 print(f"expand_pr exception: {str(e)}")
