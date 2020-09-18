@@ -1,0 +1,6 @@
+[Core]
+Name = github_links
+Module = github_links
+
+[Documentation]
+Description = Expands GitHub pull request and issue links into something helpful
