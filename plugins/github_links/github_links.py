@@ -63,17 +63,17 @@ class GithubLinks(BotPlugin):
         """
 
     def expand_pr(self, link):
-        if link in self.expanded_links:
-            return
-        else:
-            self.expanded_links.append(link)
-
-        # Only keep the last 5 expanded links
-        self.expanded_links = self.expanded_links[-5:]
-
         # Parse an url like https://github.com/ansible-collections/community.general/pull/786
         url = urlparse(link)
         namespace, repo, pull, pull_id = url.path[1:].split("/")
+
+        if (namespace, repo, pull_id) in self.expanded_links:
+            return
+        else:
+            self.expanded_links.append((namespace, repo, pull_id))
+
+        # Only keep the last 5 expanded links
+        self.expanded_links = self.expanded_links[-5:]
 
         # Craft the url we need to query this pull request
         # https://developer.github.com/v3/pulls/#get-a-pull-request
