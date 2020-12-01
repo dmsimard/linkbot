@@ -24,6 +24,8 @@ class GithubLinks(BotPlugin):
             "Accept": "application/vnd.github.nightshade-preview+json"
         })
 
+        # To keep track of expanded links so we don't expand the same links too often
+        self.expanded_links = []
 
     def callback_message(self, mess):
         """
@@ -61,6 +63,14 @@ class GithubLinks(BotPlugin):
         """
 
     def expand_pr(self, link):
+        if link in self.expanded_links:
+            return
+        else:
+            self.expanded_links.append(link)
+
+        # Only keep the last 5 expanded links
+        self.expanded_links = self.expanded_links[-5:]
+
         # Parse an url like https://github.com/ansible-collections/community.general/pull/786
         url = urlparse(link)
         namespace, repo, pull, pull_id = url.path[1:].split("/")
