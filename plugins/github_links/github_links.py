@@ -31,26 +31,22 @@ class GithubLinks(BotPlugin):
         """
         Triggered for every received message that isn't coming from the bot itself
         """
-        try:
-            url = re.search("(?P<url>https?://[^\s]+)", mess.body).group("url")
-        except AttributeError:
-            # There's no https URL in the message, nothing else to do here
+        # Find out if there's any github URLs in the body
+        urls = re.findall("https://github.com[^\s]+", mess.body)
+        if not urls:
             return False
 
-        parsed_url = urlparse(url)
-        if parsed_url.netloc != "github.com":
-            # We're only interested in github.com links
-            return False
+        for url in urls:
+            parsed_url = urlparse(url)
+            match_pr = re.findall("/pull/\d+", parsed_url.path)
+            if match_pr:
+                try:
+                    self.send(mess.to, self.expand_pr(url))
+                except Exception as e:
+                    print(f"expand_pr exception: {str(e)}")
+                    return False
 
-        match_pr = re.search("/pull/\d+", parsed_url.path)
-        if match_pr:
-            try:
-                self.send(mess.to, self.expand_pr(url))
-                return True
-            except Exception as e:
-                print(f"expand_pr exception: {str(e)}")
-                return False
-
+        return True
         # TODO
         """
         match_issues = re.search("/issues/\d+", parsed_url.path)
