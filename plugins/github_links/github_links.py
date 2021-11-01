@@ -88,5 +88,5 @@ class GithubLinks(BotPlugin):
             title=pr_details["title"],
             user=pr_details["user"]["login"],
             labels=f"[{','.join(labels)}]" if labels else "",
-            assignee=f"(assigned to {assignee})" if assignee is not None else ""
+            assignee=f"(assigned to {assignee['login']})" if assignee is not None else ""
         )
